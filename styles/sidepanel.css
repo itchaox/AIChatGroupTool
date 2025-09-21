@@ -265,18 +265,19 @@ body {
 }
 
 .group-item {
-    background: rgba(42, 42, 42, 0.6);
-    border: 1px solid #444;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.03);
     border-radius: 8px;
-    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     cursor: pointer;
     transition: all 0.2s ease;
     position: relative;
 }
 
 .group-item:hover {
-    background: rgba(52, 52, 52, 0.8);
-    border-color: #555;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.15);
     transform: translateY(-1px);
 }
 
@@ -290,12 +291,36 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 8px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.group-header:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.group-header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.group-toggle-arrow {
+    font-size: 12px;
+    color: #888;
+    transition: all 0.2s ease;
+    user-select: none;
+    width: 16px;
+    text-align: center;
 }
 
 .group-name {
     font-weight: 500;
     color: #fff;
     font-size: 14px;
+    user-select: none;
 }
 
 .group-count {
@@ -314,17 +339,41 @@ body {
     gap: 4px;
     max-height: 200px;
     overflow-y: auto;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.bookmarks-list.collapsed {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 .bookmark-item {
+    display: flex;
+    align-items: center;
     padding: 8px 12px;
-    background: rgba(60, 60, 60, 0.5);
+    margin-left: 24px;
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
+    border: 1px solid transparent;
+    position: relative;
     gap: 8px;
+}
+
+.bookmark-item::before {
+    content: '';
+    position: absolute;
+    left: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2px;
+    height: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 1px;
 }
 
 .bookmark-item:hover {
@@ -572,6 +621,45 @@ body {
 .confirm-text {
     color: #ccc;
     line-height: 1.6;
+}
+
+/* 工具选项菜单 */
+.tool-options-menu {
+    position: fixed;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 4px 0;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    z-index: 2000;
+    display: none;
+    min-width: 120px;
+}
+
+.tool-options-menu.show {
+    display: block;
+}
+
+.tool-menu-item {
+    padding: 8px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #ccc;
+    transition: all 0.2s ease;
+}
+
+.tool-menu-item:hover {
+    background: #3a3a3a;
+    color: #fff;
+}
+
+.tool-menu-separator {
+    height: 1px;
+    background: #444;
+    margin: 4px 0;
 }
 
 /* 右键菜单 */

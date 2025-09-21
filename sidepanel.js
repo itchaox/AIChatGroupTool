@@ -8,6 +8,7 @@ class AIGroupManager {
         this.contextMenuTarget = null;
         this.currentToolMenuTarget = null;
         this.toolToDelete = null;
+        this.groupExpandedStates = {}; // 存储分组展开状态
         
         // AI工具配置
         this.aiTools = {
@@ -38,6 +39,7 @@ class AIGroupManager {
     
     async init() {
         await this.loadData();
+        this.loadGroupStates();
         this.bindEvents();
         this.render();
         this.detectCurrentAITool();
@@ -223,21 +225,17 @@ class AIGroupManager {
     }
     
     showAddToolModal() {
+        // 重置弹窗状态为新增模式
+        this.resetAddToolModal();
+        
+        // 显示模态框
         this.showModal('addToolModal');
-        const toolNameInput = document.getElementById('toolNameInput');
-        const toolIconInput = document.getElementById('toolIconInput');
-        
-        // 清空输入框
-        if (toolNameInput) toolNameInput.value = '';
-        if (toolIconInput) toolIconInput.value = '🤖';
-        
-        // 重置图标选择
-        this.resetIconSelection();
         
         // 绑定图标选择事件
         this.bindIconSelectorEvents();
         
         // 聚焦到工具名称输入框
+        const toolNameInput = document.getElementById('toolNameInput');
         setTimeout(() => toolNameInput?.focus(), 100);
     }
     
@@ -253,15 +251,36 @@ class AIGroupManager {
             return;
         }
         
-        // 生成唯一的工具键
-        const toolKey = 'custom_' + Date.now();
-        
-        // 添加到工具列表
-        this.aiTools[toolKey] = {
-            name: toolName,
-            icon: toolIcon,
-            domains: [] // 添加domains字段确保数据完整性
-        };
+        if (this.editingToolKey) {
+            // 编辑模式：更新现有工具
+            this.aiTools[this.editingToolKey] = {
+                ...this.aiTools[this.editingToolKey],
+                name: toolName,
+                icon: toolIcon
+            };
+            
+            // 如果编辑的是当前选中的工具，更新显示
+            if (this.currentAITool === this.editingToolKey) {
+                const selectValue = document.getElementById('selectValue');
+                if (selectValue) {
+                    selectValue.innerHTML = `${toolIcon} ${toolName}`;
+                }
+            }
+            
+            this.editingToolKey = null;
+        } else {
+            // 新增模式：创建新工具
+            const toolKey = 'custom_' + Date.now();
+            
+            this.aiTools[toolKey] = {
+                name: toolName,
+                icon: toolIcon,
+                domains: []
+            };
+            
+            // 自动选择新添加的工具
+            this.selectAITool(toolKey, toolIcon, toolName);
+        }
         
         // 更新下拉选项
         this.updateSelectOptions();
@@ -269,11 +288,9 @@ class AIGroupManager {
         // 保存设置
         this.saveData();
         
-        // 关闭模态框
+        // 关闭模态框并重置状态
         this.hideModal('addToolModal');
-        
-        // 自动选择新添加的工具
-        this.selectAITool(toolKey, toolIcon, toolName);
+        this.resetAddToolModal();
     }
     
     // 重置图标选择
@@ -288,6 +305,50 @@ class AIGroupManager {
         if (firstIcon) {
             firstIcon.classList.add('selected');
         }
+    }
+    
+    // 更新图标选择状态
+    updateIconSelection(selectedIcon) {
+        const iconOptions = document.querySelectorAll('.icon-option');
+        iconOptions.forEach(option => {
+            option.classList.remove('selected');
+            if (option.dataset.icon === selectedIcon) {
+                option.classList.add('selected');
+            }
+        });
+    }
+    
+    // 重置添加工具弹窗状态
+    resetAddToolModal() {
+        // 重置编辑模式标识
+        this.editingToolKey = null;
+        
+        // 重置弹窗标题和按钮文本
+        const modalTitle = document.querySelector('#addToolModal .modal-title');
+        const confirmBtn = document.getElementById('confirmAddTool');
+        
+        if (modalTitle) {
+            modalTitle.textContent = '添加新工具';
+        }
+        
+        if (confirmBtn) {
+            confirmBtn.textContent = '添加';
+        }
+        
+        // 清空输入框
+        const toolNameInput = document.getElementById('toolNameInput');
+        const toolIconInput = document.getElementById('toolIconInput');
+        
+        if (toolNameInput) {
+            toolNameInput.value = '';
+        }
+        
+        if (toolIconInput) {
+            toolIconInput.value = '🤖';
+        }
+        
+        // 重置图标选择
+        this.resetIconSelection();
     }
     
     // 绑定图标选择器事件
@@ -333,6 +394,54 @@ class AIGroupManager {
             toolOptionsMenu.style.display = 'none';
         }
         this.currentToolMenuTarget = null;
+    }
+    
+    showEditToolModal(toolKey) {
+        const tool = this.aiTools[toolKey];
+        if (!tool) return;
+        
+        // 检查是否为默认工具
+        const defaultTools = ['chatgpt', 'claude', 'gemini', 'deepseek'];
+        if (defaultTools.includes(toolKey)) {
+            alert('默认工具不能编辑');
+            return;
+        }
+        
+        // 设置编辑模式
+        this.editingToolKey = toolKey;
+        
+        // 预填充工具数据
+        const toolNameInput = document.getElementById('toolNameInput');
+        const toolIconInput = document.getElementById('toolIconInput');
+        
+        if (toolNameInput) {
+            toolNameInput.value = tool.name || '';
+        }
+        
+        if (toolIconInput) {
+            toolIconInput.value = tool.icon || '🤖';
+        }
+        
+        // 更新图标选择器状态
+        this.updateIconSelection(tool.icon || '🤖');
+        
+        // 更新弹窗标题和按钮文本
+        const modalTitle = document.querySelector('#addToolModal .modal-title');
+        const confirmBtn = document.getElementById('confirmAddTool');
+        
+        if (modalTitle) {
+            modalTitle.textContent = '编辑工具';
+        }
+        
+        if (confirmBtn) {
+            confirmBtn.textContent = '保存';
+        }
+        
+        // 显示模态框
+        this.showModal('addToolModal');
+        
+        // 聚焦到工具名称输入框
+        setTimeout(() => toolNameInput?.focus(), 100);
     }
     
     showDeleteToolConfirm(toolKey) {
@@ -407,12 +516,26 @@ class AIGroupManager {
     
     // 绑定工具选项菜单事件
     bindToolMenuEvents() {
+        const editToolItem = document.getElementById('editToolItem');
         const deleteToolItem = document.getElementById('deleteToolItem');
         
-        // 移除之前的事件监听器，避免重复绑定
+        if (editToolItem) {
+            // 移除之前的事件监听器，避免重复绑定
+            editToolItem.replaceWith(editToolItem.cloneNode(true));
+            const newEditToolItem = document.getElementById('editToolItem');
+            
+            newEditToolItem.addEventListener('click', () => {
+                this.hideToolOptionsMenu();
+                if (this.currentToolMenuTarget) {
+                    this.showEditToolModal(this.currentToolMenuTarget);
+                }
+            });
+        }
+        
         if (deleteToolItem) {
-            const newDeleteToolItem = deleteToolItem.cloneNode(true);
-            deleteToolItem.parentNode.replaceChild(newDeleteToolItem, deleteToolItem);
+            // 移除之前的事件监听器，避免重复绑定
+            deleteToolItem.replaceWith(deleteToolItem.cloneNode(true));
+            const newDeleteToolItem = document.getElementById('deleteToolItem');
             
             newDeleteToolItem.addEventListener('click', () => {
                 this.hideToolOptionsMenu();
@@ -433,15 +556,6 @@ class AIGroupManager {
                 const toolKey = menu.dataset.tool;
                 this.showToolOptionsMenu(e, toolKey);
             });
-        });
-        
-        // 绑定工具选项菜单事件
-        const deleteToolItem = document.getElementById('deleteToolItem');
-        deleteToolItem?.addEventListener('click', () => {
-            this.hideToolOptionsMenu();
-            if (this.currentToolMenuTarget) {
-                this.showDeleteToolConfirm(this.currentToolMenuTarget);
-            }
         });
         
         // 点击外部关闭工具选项菜单
@@ -592,11 +706,14 @@ class AIGroupManager {
         
         groupsList.innerHTML = currentGroups.map(group => `
             <div class="group-item" data-group-id="${group.id}">
-                <div class="group-header">
-                    <span class="group-name">${this.escapeHtml(group.name)}</span>
+                <div class="group-header" data-group-id="${group.id}">
+                    <div class="group-header-left">
+                        <span class="group-toggle-arrow">▶</span>
+                        <span class="group-name">${this.escapeHtml(group.name)}</span>
+                    </div>
                     <span class="group-count">${group.bookmarks.length}</span>
                 </div>
-                <div class="bookmarks-list">
+                <div class="bookmarks-list" data-group-id="${group.id}">
                     ${group.bookmarks.map(bookmark => `
                         <div class="bookmark-item" data-bookmark-id="${bookmark.id}" data-url="${this.escapeHtml(bookmark.url)}">
                             <span class="bookmark-icon">🔗</span>
@@ -607,11 +724,78 @@ class AIGroupManager {
             </div>
         `).join('');
         
+        // 初始化分组展开状态
+        this.initGroupStates();
+        
         // 绑定分组和收藏项事件
         this.bindGroupEvents();
     }
     
+    // 初始化分组展开状态
+    initGroupStates() {
+        const currentGroups = this.groups.filter(group => group.aiTool === this.currentAITool);
+        currentGroups.forEach(group => {
+            // 如果没有保存的状态，默认展开
+            if (this.groupExpandedStates[group.id] === undefined) {
+                this.groupExpandedStates[group.id] = true;
+            }
+            this.updateGroupDisplay(group.id);
+        });
+    }
+    
+    // 切换分组展开状态
+    toggleGroupExpanded(groupId) {
+        this.groupExpandedStates[groupId] = !this.groupExpandedStates[groupId];
+        this.updateGroupDisplay(groupId);
+        this.saveGroupStates();
+    }
+    
+    // 更新分组显示状态
+    updateGroupDisplay(groupId) {
+        const bookmarksList = document.querySelector(`.bookmarks-list[data-group-id="${groupId}"]`);
+        const arrow = document.querySelector(`.group-item[data-group-id="${groupId}"] .group-toggle-arrow`);
+        
+        if (bookmarksList && arrow) {
+            const isExpanded = this.groupExpandedStates[groupId];
+            
+            if (isExpanded) {
+                bookmarksList.classList.remove('collapsed');
+                arrow.textContent = '▼';
+            } else {
+                bookmarksList.classList.add('collapsed');
+                arrow.textContent = '▶';
+            }
+        }
+    }
+    
+    // 保存分组展开状态
+    saveGroupStates() {
+        localStorage.setItem('groupExpandedStates', JSON.stringify(this.groupExpandedStates));
+    }
+    
+    // 加载分组展开状态
+    loadGroupStates() {
+        const saved = localStorage.getItem('groupExpandedStates');
+        if (saved) {
+            try {
+                this.groupExpandedStates = JSON.parse(saved);
+            } catch (error) {
+                console.error('加载分组状态失败:', error);
+                this.groupExpandedStates = {};
+            }
+        }
+    }
+    
     bindGroupEvents() {
+        // 分组头部点击事件（展开/折叠）
+        document.querySelectorAll('.group-header').forEach(groupHeader => {
+            groupHeader.addEventListener('click', (e) => {
+                e.preventDefault();
+                const groupId = groupHeader.dataset.groupId;
+                this.toggleGroupExpanded(groupId);
+            });
+        });
+        
         // 分组右键菜单
         document.querySelectorAll('.group-item').forEach(groupItem => {
             groupItem.addEventListener('contextmenu', (e) => {
