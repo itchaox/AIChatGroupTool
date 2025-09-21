@@ -10,14 +10,47 @@
     <div class="container">
         <!-- 头部区域 -->
         <header class="header">
-            <h1 class="title">AI工具分组管理</h1>
             <div class="ai-tool-selector">
-                <select id="aiToolSelect" class="ai-tool-select">
-                    <option value="chatgpt">🤖 ChatGPT</option>
-                    <option value="claude">🧠 Claude AI</option>
-                    <option value="gemini">💎 Google Gemini</option>
-                    <option value="poe">🔮 Poe</option>
-                </select>
+                <div class="custom-select" id="customSelect">
+                    <div class="select-trigger" id="selectTrigger">
+                        <span class="select-value" id="selectValue">🤖 ChatGPT</span>
+                        <span class="select-arrow">▼</span>
+                    </div>
+                    <div class="select-dropdown" id="selectDropdown">
+                        <div class="add-tool-option" id="addToolOption">
+                            <span class="option-icon">+</span>
+                            <span class="option-text">添加新工具</span>
+                        </div>
+                        <div class="select-option" data-value="chatgpt">
+                            <span class="option-icon">🤖</span>
+                            <span class="option-text">ChatGPT</span>
+                            <button class="option-menu" data-tool="chatgpt" title="更多选项">
+                                <span class="menu-dots">⋯</span>
+                            </button>
+                        </div>
+                        <div class="select-option" data-value="claude">
+                            <span class="option-icon">🧠</span>
+                            <span class="option-text">Claude AI</span>
+                            <button class="option-menu" data-tool="claude" title="更多选项">
+                                <span class="menu-dots">⋯</span>
+                            </button>
+                        </div>
+                        <div class="select-option" data-value="gemini">
+                            <span class="option-icon">💎</span>
+                            <span class="option-text">Google Gemini</span>
+                            <button class="option-menu" data-tool="gemini" title="更多选项">
+                                <span class="menu-dots">⋯</span>
+                            </button>
+                        </div>
+                        <div class="select-option" data-value="poe">
+                            <span class="option-icon">🔮</span>
+                            <span class="option-text">Poe</span>
+                            <button class="option-menu" data-tool="poe" title="更多选项">
+                                <span class="menu-dots">⋯</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </header>
 
@@ -48,10 +81,6 @@
             <button id="addBookmarkBtn" class="action-btn primary">
                 <span class="icon">⭐</span>
                 <span class="text">添加收藏</span>
-            </button>
-            <button id="settingsBtn" class="action-btn secondary">
-                <span class="icon">⚙️</span>
-                <span class="text">设置</span>
             </button>
         </footer>
     </div>
@@ -135,6 +164,42 @@
                 <button id="cancelDelete" class="btn btn-secondary">取消</button>
                 <button id="confirmDelete" class="btn btn-danger">删除</button>
             </div>
+        </div>
+    </div>
+
+    <!-- 添加新工具模态框 -->
+    <div id="addToolModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">添加新工具</h3>
+                <button class="modal-close" id="closeAddToolModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="toolNameInput" class="label">工具名称</label>
+                    <input type="text" id="toolNameInput" class="input" placeholder="请输入工具名称" maxlength="50">
+                </div>
+                <div class="form-group">
+                    <label for="toolIconInput" class="label">工具图标</label>
+                    <input type="text" id="toolIconInput" class="input" placeholder="请输入emoji图标" maxlength="10">
+                </div>
+                <div class="form-group">
+                    <label for="toolDomainsInput" class="label">相关域名</label>
+                    <textarea id="toolDomainsInput" class="input" placeholder="请输入相关域名，每行一个\n例如：\nchatgpt.com\nopenai.com" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelAddTool" class="btn btn-secondary">取消</button>
+                <button id="confirmAddTool" class="btn btn-primary">添加</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 工具选项菜单 -->
+    <div id="toolOptionsMenu" class="context-menu">
+        <div class="context-menu-item" id="deleteToolItem">
+            <span class="icon">🗑️</span>
+            <span class="text">删除工具</span>
         </div>
     </div>
 

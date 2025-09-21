@@ -6,6 +6,8 @@ class AIGroupManager {
         this.groups = [];
         this.currentGroupId = null;
         this.contextMenuTarget = null;
+        this.currentToolMenuTarget = null;
+        this.toolToDelete = null;
         
         // AI工具配置
         this.aiTools = {
@@ -48,13 +50,20 @@ class AIGroupManager {
             this.groups = result.aiGroups || [];
             this.currentAITool = result.currentAITool || 'chatgpt';
             
-            // 设置AI工具选择器
-            const aiToolSelect = document.getElementById('aiToolSelect');
-            if (aiToolSelect) {
-                aiToolSelect.value = this.currentAITool;
-            }
+            // 设置自定义下拉框的显示值
+            this.updateCustomSelectValue();
         } catch (error) {
             console.error('加载数据失败:', error);
+        }
+    }
+    
+    // 更新自定义下拉框的显示值
+    updateCustomSelectValue() {
+        const selectValue = document.getElementById('selectValue');
+        const aiTool = this.aiTools[this.currentAITool];
+        
+        if (selectValue && aiTool) {
+            selectValue.innerHTML = `${aiTool.icon} ${aiTool.name}`;
         }
     }
     
@@ -71,13 +80,8 @@ class AIGroupManager {
     
     // 事件绑定
     bindEvents() {
-        // AI工具选择器
-        const aiToolSelect = document.getElementById('aiToolSelect');
-        aiToolSelect?.addEventListener('change', (e) => {
-            this.currentAITool = e.target.value;
-            this.saveData();
-            this.render();
-        });
+        // 自定义下拉框事件
+        this.bindCustomSelectEvents();
         
         // 新建分组按钮
         const addGroupBtn = document.getElementById('addGroupBtn');
@@ -87,18 +91,268 @@ class AIGroupManager {
         const addBookmarkBtn = document.getElementById('addBookmarkBtn');
         addBookmarkBtn?.addEventListener('click', () => this.showAddBookmarkModal());
         
-        // 设置按钮
-        const settingsBtn = document.getElementById('settingsBtn');
-        settingsBtn?.addEventListener('click', () => this.showSettings());
-        
         // 模态框事件
         this.bindModalEvents();
         
         // 右键菜单事件
         this.bindContextMenuEvents();
         
-        // 全局点击事件（关闭右键菜单）
-        document.addEventListener('click', () => this.hideContextMenu());
+        // 全局点击事件（关闭右键菜单和下拉框）
+        document.addEventListener('click', (e) => {
+            this.hideContextMenu();
+            this.closeCustomSelect(e);
+        });
+    }
+    
+    // 自定义下拉框事件绑定
+    bindCustomSelectEvents() {
+        const selectTrigger = document.getElementById('selectTrigger');
+        const selectDropdown = document.getElementById('selectDropdown');
+        const selectOptions = document.querySelectorAll('.select-option');
+        
+        // 点击触发器切换下拉框
+        selectTrigger?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.toggleCustomSelect();
+        });
+        
+        // 选项点击事件
+        selectOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const value = option.dataset.value;
+                const icon = option.querySelector('.option-icon').textContent;
+                const text = option.querySelector('.option-text').textContent;
+                this.selectAITool(value, icon, text);
+            });
+        });
+    }
+    
+    // 切换下拉框显示状态
+    toggleCustomSelect() {
+        const selectTrigger = document.getElementById('selectTrigger');
+        const selectDropdown = document.getElementById('selectDropdown');
+        
+        if (selectDropdown?.classList.contains('show')) {
+            this.closeCustomSelect();
+        } else {
+            this.openCustomSelect();
+        }
+    }
+    
+    // 打开下拉框
+    openCustomSelect() {
+        const selectTrigger = document.getElementById('selectTrigger');
+        const selectDropdown = document.getElementById('selectDropdown');
+        
+        selectTrigger?.classList.add('active');
+        selectDropdown?.classList.add('show');
+        
+        // 更新选中状态
+        this.updateSelectedOption();
+    }
+    
+    // 关闭下拉框
+    closeCustomSelect(event) {
+        const customSelect = document.getElementById('customSelect');
+        const selectTrigger = document.getElementById('selectTrigger');
+        const selectDropdown = document.getElementById('selectDropdown');
+        
+        // 如果点击的是下拉框内部，不关闭
+        if (event && customSelect?.contains(event.target)) {
+            return;
+        }
+        
+        selectTrigger?.classList.remove('active');
+        selectDropdown?.classList.remove('show');
+    }
+    
+    // 选择AI工具
+    selectAITool(value, icon, text) {
+        this.currentAITool = value;
+        
+        // 更新显示值
+        const selectValue = document.getElementById('selectValue');
+        if (selectValue) {
+            selectValue.innerHTML = `${icon} ${text}`;
+        }
+        
+        // 关闭下拉框
+        this.closeCustomSelect();
+        
+        // 保存数据并重新渲染
+        this.saveData();
+        this.render();
+    }
+    
+    showAddToolModal() {
+        this.showModal('addToolModal');
+        const toolNameInput = document.getElementById('toolNameInput');
+        const toolIconInput = document.getElementById('toolIconInput');
+        const toolDomainInput = document.getElementById('toolDomainInput');
+        
+        // 清空输入框
+        if (toolNameInput) toolNameInput.value = '';
+        if (toolIconInput) toolIconInput.value = '';
+        if (toolDomainInput) toolDomainInput.value = '';
+        
+        // 聚焦到工具名称输入框
+        setTimeout(() => toolNameInput?.focus(), 100);
+    }
+    
+    addNewTool() {
+        const toolNameInput = document.getElementById('toolNameInput');
+        const toolIconInput = document.getElementById('toolIconInput');
+        const toolDomainInput = document.getElementById('toolDomainInput');
+        
+        const toolName = toolNameInput?.value.trim();
+        const toolIcon = toolIconInput?.value.trim() || '🤖';
+        const toolDomain = toolDomainInput?.value.trim();
+        
+        if (!toolName) {
+            alert('请输入工具名称');
+            return;
+        }
+        
+        // 生成唯一的工具键
+        const toolKey = 'custom_' + Date.now();
+        
+        // 添加到工具列表
+        this.aiTools[toolKey] = {
+            name: toolName,
+            icon: toolIcon,
+            domain: toolDomain || null
+        };
+        
+        // 更新下拉选项
+        this.updateSelectOptions();
+        
+        // 保存设置
+        this.saveData();
+        
+        // 关闭模态框
+        this.hideModal('addToolModal');
+        
+        // 自动选择新添加的工具
+        this.selectAITool(toolKey);
+    }
+    
+    showToolOptionsMenu(event, toolKey) {
+        const toolOptionsMenu = document.getElementById('toolOptionsMenu');
+        if (!toolOptionsMenu) return;
+        
+        this.currentToolMenuTarget = toolKey;
+        
+        // 显示菜单
+        toolOptionsMenu.style.display = 'block';
+        
+        // 定位菜单
+        const rect = event.target.getBoundingClientRect();
+        toolOptionsMenu.style.left = (rect.left - 80) + 'px';
+        toolOptionsMenu.style.top = (rect.bottom + 5) + 'px';
+    }
+    
+    hideToolOptionsMenu() {
+        const toolOptionsMenu = document.getElementById('toolOptionsMenu');
+        if (toolOptionsMenu) {
+            toolOptionsMenu.style.display = 'none';
+        }
+        this.currentToolMenuTarget = null;
+    }
+    
+    showDeleteToolConfirm(toolKey) {
+        const tool = this.aiTools[toolKey];
+        if (!tool) return;
+        
+        // 检查是否为默认工具
+        const defaultTools = ['chatgpt', 'claude', 'gemini', 'deepseek'];
+        if (defaultTools.includes(toolKey)) {
+            alert('默认工具不能删除');
+            return;
+        }
+        
+        this.toolToDelete = toolKey;
+        const confirmMessage = document.getElementById('confirmDeleteMessage');
+        if (confirmMessage) {
+            confirmMessage.textContent = `确定要删除工具 "${tool.name}" 吗？`;
+        }
+        
+        this.showModal('confirmDeleteModal');
+    }
+    
+    updateSelectOptions() {
+        const selectDropdown = document.getElementById('selectDropdown');
+        if (!selectDropdown) return;
+        
+        // 清空现有选项（保留添加新工具选项）
+        const addToolOption = document.getElementById('addToolOption');
+        selectDropdown.innerHTML = '';
+        if (addToolOption) {
+            selectDropdown.appendChild(addToolOption.cloneNode(true));
+        }
+        
+        // 重新生成工具选项
+        Object.entries(this.aiTools).forEach(([key, tool]) => {
+            const option = document.createElement('div');
+            option.className = 'select-option';
+            option.dataset.value = key;
+            
+            const defaultTools = ['chatgpt', 'claude', 'gemini', 'deepseek'];
+            const showMenu = !defaultTools.includes(key);
+            
+            option.innerHTML = `
+                <span class="option-icon">${tool.icon}</span>
+                <span class="option-text">${tool.name}</span>
+                ${showMenu ? `<span class="option-menu" data-tool="${key}">⋯</span>` : ''}
+            `;
+            
+            selectDropdown.appendChild(option);
+        });
+        
+        // 重新绑定事件
+        setTimeout(() => {
+            this.bindCustomSelectEvents();
+        }, 100);
+    }
+    
+    // 更新选中选项的样式
+    updateSelectedOption() {
+        const selectOptions = document.querySelectorAll('.select-option');
+        selectOptions.forEach(option => {
+            option.classList.remove('selected');
+            if (option.dataset.value === this.currentAITool) {
+                option.classList.add('selected');
+            }
+        });
+    }
+    
+    bindToolOptionMenuEvents() {
+        const optionMenus = document.querySelectorAll('.option-menu');
+        const toolOptionsMenu = document.getElementById('toolOptionsMenu');
+        
+        optionMenus.forEach(menu => {
+            menu.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const toolKey = menu.dataset.tool;
+                this.showToolOptionsMenu(e, toolKey);
+            });
+        });
+        
+        // 绑定工具选项菜单事件
+        const deleteToolItem = document.getElementById('deleteToolItem');
+        deleteToolItem?.addEventListener('click', () => {
+            this.hideToolOptionsMenu();
+            if (this.currentToolMenuTarget) {
+                this.showDeleteToolConfirm(this.currentToolMenuTarget);
+            }
+        });
+        
+        // 点击外部关闭工具选项菜单
+        document.addEventListener('click', (e) => {
+            if (toolOptionsMenu && !toolOptionsMenu.contains(e.target)) {
+                this.hideToolOptionsMenu();
+            }
+        });
     }
     
     bindModalEvents() {
@@ -141,6 +395,21 @@ class AIGroupManager {
         closeAddBookmarkModal?.addEventListener('click', () => this.hideModal('addBookmarkModal'));
         cancelAddBookmark?.addEventListener('click', () => this.hideModal('addBookmarkModal'));
         confirmAddBookmark?.addEventListener('click', () => this.addBookmark());
+        
+        // 添加新工具模态框
+        const addToolModal = document.getElementById('addToolModal');
+        const closeAddToolModal = document.getElementById('closeAddToolModal');
+        const cancelAddTool = document.getElementById('cancelAddTool');
+        const confirmAddTool = document.getElementById('confirmAddTool');
+        const toolNameInput = document.getElementById('toolNameInput');
+        
+        closeAddToolModal?.addEventListener('click', () => this.hideModal('addToolModal'));
+        cancelAddTool?.addEventListener('click', () => this.hideModal('addToolModal'));
+        confirmAddTool?.addEventListener('click', () => this.addNewTool());
+        
+        toolNameInput?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.addNewTool();
+        });
         
         // 确认删除模态框
         const confirmDeleteModal = document.getElementById('confirmDeleteModal');
@@ -213,12 +482,16 @@ class AIGroupManager {
         
         if (currentGroups.length === 0) {
             groupsList.innerHTML = '';
-            groupsList.appendChild(emptyState);
-            emptyState.style.display = 'block';
+            if (emptyState) {
+                groupsList.appendChild(emptyState);
+                emptyState.style.display = 'block';
+            }
             return;
         }
         
-        emptyState.style.display = 'none';
+        if (emptyState) {
+            emptyState.style.display = 'none';
+        }
         
         groupsList.innerHTML = currentGroups.map(group => `
             <div class="group-item" data-group-id="${group.id}">
@@ -469,6 +742,33 @@ class AIGroupManager {
     }
     
     executeDelete() {
+        // 如果是删除工具
+        if (this.toolToDelete) {
+            // 删除工具
+            delete this.aiTools[this.toolToDelete];
+            
+            // 如果删除的是当前选中的工具，切换到默认工具
+            if (this.currentAITool === this.toolToDelete) {
+                this.currentAITool = 'chatgpt';
+                const selectValue = document.getElementById('selectValue');
+                if (selectValue) {
+                    selectValue.innerHTML = `${this.aiTools.chatgpt.icon} ${this.aiTools.chatgpt.name}`;
+                }
+            }
+            
+            // 更新下拉选项
+            this.updateSelectOptions();
+            
+            // 保存设置
+            this.saveData();
+            
+            // 关闭模态框
+            this.hideModal('confirmDeleteModal');
+            
+            this.toolToDelete = null;
+            return;
+        }
+        
         const confirmBtn = document.getElementById('confirmDelete');
         const type = confirmBtn?.dataset.deleteType;
         const id = confirmBtn?.dataset.deleteId;
@@ -641,10 +941,7 @@ class AIGroupManager {
         }
     }
     
-    showSettings() {
-        // 简单的设置功能，可以扩展
-        this.showToast('设置功能开发中...', 'info');
-    }
+
     
     showToast(message, type = 'info') {
         // 创建简单的toast提示

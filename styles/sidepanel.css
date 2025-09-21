@@ -43,10 +43,19 @@ body {
 
 .ai-tool-selector {
     width: 100%;
+    position: relative;
 }
 
-.ai-tool-select {
+/* 自定义下拉框样式 */
+.custom-select {
+    position: relative;
     width: 100%;
+}
+
+.select-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     padding: 10px 12px;
     background: #333;
     border: 1px solid #444;
@@ -55,17 +64,148 @@ body {
     font-size: 14px;
     cursor: pointer;
     transition: all 0.2s ease;
+    user-select: none;
 }
 
-.ai-tool-select:hover {
+.select-trigger:hover {
     border-color: #555;
     background: #3a3a3a;
 }
 
-.ai-tool-select:focus {
-    outline: none;
+.select-trigger.active {
     border-color: #007acc;
     box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.2);
+}
+
+.select-value {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+}
+
+.select-arrow {
+    font-size: 12px;
+    color: #888;
+    transition: transform 0.2s ease;
+}
+
+.select-trigger.active .select-arrow {
+    transform: rotate(180deg);
+    color: #007acc;
+}
+
+.select-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #333;
+    border: 1px solid #444;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    margin-top: 4px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: all 0.2s ease;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.select-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.select-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #444;
+    position: relative;
+}
+
+.select-option:last-child {
+    border-bottom: none;
+}
+
+.select-option:hover {
+    background: #3a3a3a;
+    color: #fff;
+}
+
+.select-option.selected {
+    background: rgba(0, 122, 204, 0.1);
+    color: #007acc;
+}
+
+/* 添加新工具选项样式 */
+.add-tool-option {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-radius: 4px;
+    margin: 2px 0 8px 0;
+    border-bottom: 1px solid #444;
+    color: #007acc;
+    font-weight: 500;
+}
+
+.add-tool-option:hover {
+    background-color: #2a2a2a;
+    color: #0099ff;
+}
+
+.add-tool-option .option-icon {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* 工具选项菜单按钮 */
+.option-menu {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 3px;
+    opacity: 0;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.select-option:hover .option-menu {
+    opacity: 1;
+}
+
+.option-menu:hover {
+    background-color: #444;
+    color: #fff;
+}
+
+.menu-dots {
+    font-weight: bold;
+    line-height: 1;
+}
+
+.option-icon {
+    font-size: 14px;
+}
+
+.option-text {
+    font-size: 14px;
 }
 
 /* 主内容区域 */
