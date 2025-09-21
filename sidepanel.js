@@ -97,6 +97,9 @@ class AIGroupManager {
         // 右键菜单事件
         this.bindContextMenuEvents();
         
+        // 工具选项菜单事件
+        this.bindToolMenuEvents();
+        
         // 全局点击事件（关闭右键菜单和下拉框）
         document.addEventListener('click', (e) => {
             this.hideContextMenu();
@@ -109,6 +112,7 @@ class AIGroupManager {
         const selectTrigger = document.getElementById('selectTrigger');
         const selectDropdown = document.getElementById('selectDropdown');
         const selectOptions = document.querySelectorAll('.select-option');
+        const addToolOption = document.getElementById('addToolOption');
         
         // 点击触发器切换下拉框
         selectTrigger?.addEventListener('click', (e) => {
@@ -116,14 +120,32 @@ class AIGroupManager {
             this.toggleCustomSelect();
         });
         
+        // 添加新工具选项点击事件
+        addToolOption?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.closeCustomSelect();
+            this.showAddToolModal();
+        });
+        
         // 选项点击事件
         selectOptions.forEach(option => {
             option.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const value = option.dataset.value;
-                const icon = option.querySelector('.option-icon').textContent;
-                const text = option.querySelector('.option-text').textContent;
-                this.selectAITool(value, icon, text);
+                const icon = option.querySelector('.option-icon')?.textContent;
+                const text = option.querySelector('.option-text')?.textContent;
+                if (value && icon && text) {
+                    this.selectAITool(value, icon, text);
+                }
+            });
+        });
+        
+        // 工具选项菜单按钮事件
+        document.querySelectorAll('.option-menu').forEach(menuBtn => {
+            menuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const toolKey = menuBtn.dataset.tool;
+                this.showToolOptionsMenu(e, toolKey);
             });
         });
     }
@@ -318,6 +340,7 @@ class AIGroupManager {
     // 更新选中选项的样式
     updateSelectedOption() {
         const selectOptions = document.querySelectorAll('.select-option');
+        
         selectOptions.forEach(option => {
             option.classList.remove('selected');
             if (option.dataset.value === this.currentAITool) {
@@ -325,6 +348,18 @@ class AIGroupManager {
             }
         });
     }
+    
+    // 绑定工具选项菜单事件
+    bindToolMenuEvents() {
+        const deleteToolItem = document.getElementById('deleteToolItem');
+        
+        deleteToolItem?.addEventListener('click', () => {
+             this.hideToolOptionsMenu();
+             if (this.currentToolMenuTarget) {
+                 this.showDeleteToolConfirm(this.currentToolMenuTarget);
+             }
+         });
+     }
     
     bindToolOptionMenuEvents() {
         const optionMenus = document.querySelectorAll('.option-menu');
@@ -1014,11 +1049,6 @@ style.textContent = `
 document.head.appendChild(style);
 
 // 初始化应用
-document.addEventListener('DOMContentLoaded', () => {
-    new AIGroupManager();
-});
-
-// 如果DOM已经加载完成
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         new AIGroupManager();
