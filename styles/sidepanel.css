@@ -695,3 +695,51 @@ body {
         transition-duration: 0.01ms !important;
     }
 }
+
+/* 图标选择器样式 */
+.icon-selector {
+    width: 100%;
+}
+
+.icon-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+    padding: 12px;
+    background: #2a2a2a;
+    border-radius: 8px;
+    border: 1px solid #444;
+}
+
+.icon-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    background: #333;
+    border: 2px solid transparent;
+}
+
+.icon-option:hover {
+    background: #444;
+    transform: scale(1.1);
+}
+
+.icon-option.selected {
+    background: rgba(0, 122, 204, 0.2);
+    border-color: #007acc;
+    transform: scale(1.1);
+}
+
+.icon-selector .input {
+    margin-top: 8px;
+    text-align: center;
+    font-size: 16px;
+    cursor: pointer;
+}

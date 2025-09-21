@@ -181,12 +181,29 @@
                 </div>
                 <div class="form-group">
                     <label for="toolIconInput" class="label">工具图标</label>
-                    <input type="text" id="toolIconInput" class="input" placeholder="请输入emoji图标" maxlength="10">
+                    <div class="icon-selector">
+                        <div class="icon-grid">
+                            <span class="icon-option" data-icon="🤖">🤖</span>
+                            <span class="icon-option" data-icon="⭐">⭐</span>
+                            <span class="icon-option" data-icon="💎">💎</span>
+                            <span class="icon-option" data-icon="🔥">🔥</span>
+                            <span class="icon-option" data-icon="📊">📊</span>
+                            <span class="icon-option" data-icon="🎯">🎯</span>
+                            <span class="icon-option" data-icon="⚡">⚡</span>
+                            <span class="icon-option" data-icon="🔮">🔮</span>
+                            <span class="icon-option" data-icon="💡">💡</span>
+                            <span class="icon-option" data-icon="🧠">🧠</span>
+                            <span class="icon-option" data-icon="🎨">🎨</span>
+                            <span class="icon-option" data-icon="📝">📝</span>
+                            <span class="icon-option" data-icon="🔧">🔧</span>
+                            <span class="icon-option" data-icon="📱">📱</span>
+                            <span class="icon-option" data-icon="💻">💻</span>
+                            <span class="icon-option" data-icon="🌟">🌟</span>
+                        </div>
+                        <input type="text" id="toolIconInput" class="input" placeholder="或输入自定义emoji" readonly maxlength="10">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="toolDomainsInput" class="label">相关域名</label>
-                    <textarea id="toolDomainsInput" class="input" placeholder="请输入相关域名，每行一个\n例如：\nchatgpt.com\nopenai.com" rows="3"></textarea>
-                </div>
+
             </div>
             <div class="modal-footer">
                 <button id="cancelAddTool" class="btn btn-secondary">取消</button>

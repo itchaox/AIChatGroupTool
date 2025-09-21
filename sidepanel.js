@@ -211,12 +211,16 @@ class AIGroupManager {
         this.showModal('addToolModal');
         const toolNameInput = document.getElementById('toolNameInput');
         const toolIconInput = document.getElementById('toolIconInput');
-        const toolDomainInput = document.getElementById('toolDomainInput');
         
         // 清空输入框
         if (toolNameInput) toolNameInput.value = '';
-        if (toolIconInput) toolIconInput.value = '';
-        if (toolDomainInput) toolDomainInput.value = '';
+        if (toolIconInput) toolIconInput.value = '🤖';
+        
+        // 重置图标选择
+        this.resetIconSelection();
+        
+        // 绑定图标选择事件
+        this.bindIconSelectorEvents();
         
         // 聚焦到工具名称输入框
         setTimeout(() => toolNameInput?.focus(), 100);
@@ -225,11 +229,9 @@ class AIGroupManager {
     addNewTool() {
         const toolNameInput = document.getElementById('toolNameInput');
         const toolIconInput = document.getElementById('toolIconInput');
-        const toolDomainInput = document.getElementById('toolDomainInput');
         
         const toolName = toolNameInput?.value.trim();
         const toolIcon = toolIconInput?.value.trim() || '🤖';
-        const toolDomain = toolDomainInput?.value.trim();
         
         if (!toolName) {
             alert('请输入工具名称');
@@ -242,8 +244,7 @@ class AIGroupManager {
         // 添加到工具列表
         this.aiTools[toolKey] = {
             name: toolName,
-            icon: toolIcon,
-            domain: toolDomain || null
+            icon: toolIcon
         };
         
         // 更新下拉选项
@@ -257,6 +258,61 @@ class AIGroupManager {
         
         // 自动选择新添加的工具
         this.selectAITool(toolKey);
+    }
+    
+    // 重置图标选择
+    resetIconSelection() {
+        const iconOptions = document.querySelectorAll('.icon-option');
+        iconOptions.forEach(option => {
+            option.classList.remove('selected');
+        });
+        
+        // 默认选择第一个图标
+        const firstIcon = document.querySelector('.icon-option');
+        if (firstIcon) {
+            firstIcon.classList.add('selected');
+        }
+    }
+    
+    // 绑定图标选择器事件
+    bindIconSelectorEvents() {
+        const iconOptions = document.querySelectorAll('.icon-option');
+        const toolIconInput = document.getElementById('toolIconInput');
+        
+        iconOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                // 移除所有选中状态
+                iconOptions.forEach(opt => opt.classList.remove('selected'));
+                
+                // 添加选中状态
+                option.classList.add('selected');
+                
+                // 更新输入框值
+                const icon = option.dataset.icon;
+                if (toolIconInput && icon) {
+                    toolIconInput.value = icon;
+                }
+            });
+        });
+        
+        // 允许用户手动输入图标
+        if (toolIconInput) {
+            toolIconInput.addEventListener('input', () => {
+                // 移除所有选中状态
+                iconOptions.forEach(opt => opt.classList.remove('selected'));
+            });
+            
+            // 点击输入框时允许编辑
+            toolIconInput.addEventListener('click', () => {
+                toolIconInput.removeAttribute('readonly');
+                toolIconInput.select();
+            });
+            
+            // 失去焦点时设为只读
+            toolIconInput.addEventListener('blur', () => {
+                toolIconInput.setAttribute('readonly', 'true');
+            });
+        }
     }
     
     showToolOptionsMenu(event, toolKey) {
