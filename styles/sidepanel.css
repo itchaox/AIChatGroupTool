@@ -703,27 +703,29 @@ body {
 
 .icon-grid {
     display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    gap: 8px;
-    margin-bottom: 12px;
-    padding: 12px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    padding: 16px;
     background: #2a2a2a;
     border-radius: 8px;
     border: 1px solid #444;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .icon-option {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
-    font-size: 18px;
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
     cursor: pointer;
-    border-radius: 6px;
+    border-radius: 8px;
     transition: all 0.2s ease;
     background: #333;
     border: 2px solid transparent;
+    margin: 0 auto;
 }
 
 .icon-option:hover {
@@ -735,11 +737,4 @@ body {
     background: rgba(0, 122, 204, 0.2);
     border-color: #007acc;
     transform: scale(1.1);
-}
-
-.icon-selector .input {
-    margin-top: 8px;
-    text-align: center;
-    font-size: 16px;
-    cursor: pointer;
 }
