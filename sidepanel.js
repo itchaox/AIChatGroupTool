@@ -93,6 +93,9 @@ class AIGroupManager {
         const addBookmarkBtn = document.getElementById('addBookmarkBtn');
         addBookmarkBtn?.addEventListener('click', () => this.showAddBookmarkModal());
         
+        // 搜索框事件
+        this.bindSearchEvents();
+        
         // 模态框事件
         this.bindModalEvents();
         
@@ -1223,6 +1226,152 @@ class AIGroupManager {
     }
     
 
+    
+    // 搜索功能
+    bindSearchEvents() {
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+        
+        if (searchInput) {
+            // 搜索输入事件
+            searchInput.addEventListener('input', (e) => {
+                this.handleSearch(e.target.value);
+            });
+            
+            // 搜索框获得焦点时的处理
+            searchInput.addEventListener('focus', () => {
+                const searchBox = searchInput.closest('.search-box');
+                searchBox?.classList.add('focused');
+            });
+            
+            // 搜索框失去焦点时的处理
+            searchInput.addEventListener('blur', () => {
+                const searchBox = searchInput.closest('.search-box');
+                searchBox?.classList.remove('focused');
+            });
+        }
+        
+        if (clearSearchBtn) {
+            // 清除搜索按钮事件
+            clearSearchBtn.addEventListener('click', () => {
+                this.clearSearch();
+            });
+        }
+    }
+    
+    handleSearch(searchTerm) {
+        const trimmedTerm = searchTerm.trim().toLowerCase();
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+        const searchCounter = document.getElementById('searchCounter');
+        
+        // 显示/隐藏清除按钮
+        if (trimmedTerm) {
+            clearSearchBtn?.classList.add('show');
+        } else {
+            clearSearchBtn?.classList.remove('show');
+        }
+        
+        // 执行搜索过滤
+        this.filterBookmarks(trimmedTerm);
+        
+        // 更新搜索计数
+        this.updateSearchCounter(trimmedTerm);
+    }
+    
+    filterBookmarks(searchTerm) {
+        const currentGroups = this.groups.filter(group => group.aiTool === this.currentAITool);
+        
+        currentGroups.forEach(group => {
+            const groupElement = document.querySelector(`[data-group-id="${group.id}"]`);
+            if (!groupElement) return;
+            
+            const bookmarkElements = groupElement.querySelectorAll('.bookmark-item');
+            let visibleBookmarks = 0;
+            
+            bookmarkElements.forEach(bookmarkElement => {
+                const bookmarkId = bookmarkElement.dataset.bookmarkId;
+                const bookmark = group.bookmarks.find(b => b.id === bookmarkId);
+                
+                if (bookmark) {
+                    const titleMatch = bookmark.title.toLowerCase().includes(searchTerm);
+                    
+                    if (!searchTerm || titleMatch) {
+                        bookmarkElement.style.display = 'flex';
+                        visibleBookmarks++;
+                    } else {
+                        bookmarkElement.style.display = 'none';
+                    }
+                }
+            });
+            
+            // 更新分组的显示状态
+            if (searchTerm) {
+                // 搜索模式：只显示有匹配收藏的分组
+                if (visibleBookmarks > 0) {
+                    groupElement.style.display = 'block';
+                    // 搜索时自动展开有结果的分组
+                    const bookmarksList = groupElement.querySelector('.bookmarks-list');
+                    bookmarksList?.classList.remove('collapsed');
+                } else {
+                    groupElement.style.display = 'none';
+                }
+            } else {
+                // 正常模式：显示所有分组
+                groupElement.style.display = 'block';
+                // 恢复原来的展开状态
+                const bookmarksList = groupElement.querySelector('.bookmarks-list');
+                const isExpanded = this.groupExpandedStates[group.id] !== false;
+                if (isExpanded) {
+                    bookmarksList?.classList.remove('collapsed');
+                } else {
+                    bookmarksList?.classList.add('collapsed');
+                }
+            }
+        });
+    }
+    
+    updateSearchCounter(searchTerm) {
+        const searchCounter = document.getElementById('searchCounter');
+        if (!searchCounter) return;
+        
+        if (!searchTerm) {
+            searchCounter.classList.remove('show');
+            return;
+        }
+        
+        const currentGroups = this.groups.filter(group => group.aiTool === this.currentAITool);
+        let totalBookmarks = 0;
+        let matchedBookmarks = 0;
+        
+        currentGroups.forEach(group => {
+            group.bookmarks.forEach(bookmark => {
+                totalBookmarks++;
+                if (bookmark.title.toLowerCase().includes(searchTerm)) {
+                    matchedBookmarks++;
+                }
+            });
+        });
+        
+        searchCounter.textContent = `${matchedBookmarks}/${totalBookmarks} 个收藏`;
+        searchCounter.classList.add('show');
+    }
+    
+    clearSearch() {
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+        const searchCounter = document.getElementById('searchCounter');
+        
+        if (searchInput) {
+            searchInput.value = '';
+            searchInput.focus();
+        }
+        
+        clearSearchBtn?.classList.remove('show');
+        searchCounter?.classList.remove('show');
+        
+        // 恢复所有收藏的显示
+        this.filterBookmarks('');
+    }
     
     showToast(message, type = 'info') {
         // 创建简单的toast提示

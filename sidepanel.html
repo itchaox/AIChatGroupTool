@@ -65,6 +65,18 @@
                     </button>
                 </div>
                 
+                <!-- 搜索框 -->
+                <div class="search-container">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="searchInput" class="search-input" placeholder="搜索收藏...">
+                        <button id="clearSearchBtn" class="clear-search-btn" title="清除搜索">
+                            <span class="clear-icon">×</span>
+                        </button>
+                    </div>
+                    <div id="searchCounter" class="search-counter"></div>
+                </div>
+                
                 <div id="groupsList" class="groups-list">
                     <!-- 分组项将通过JavaScript动态生成 -->
                     <div class="empty-state" id="emptyState">

@@ -257,6 +257,80 @@ body {
     transform: scale(0.95);
 }
 
+/* 搜索框样式 */
+.search-container {
+    margin-bottom: 16px;
+}
+
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: #333;
+    border: 2px solid #007acc;
+    border-radius: 8px;
+    padding: 0;
+    transition: all 0.2s ease;
+}
+
+.search-box:focus-within {
+    border-color: #0099ff;
+    box-shadow: 0 0 0 2px rgba(0, 153, 255, 0.2);
+}
+
+.search-icon {
+    padding: 10px 12px;
+    color: #007acc;
+    font-size: 14px;
+    pointer-events: none;
+}
+
+.search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 10px 8px;
+    color: #e0e0e0;
+    font-size: 14px;
+}
+
+.search-input::placeholder {
+    color: #888;
+}
+
+.clear-search-btn {
+    background: none;
+    border: none;
+    padding: 10px 12px;
+    color: #888;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    transition: all 0.2s ease;
+    display: none;
+}
+
+.clear-search-btn:hover {
+    color: #ccc;
+}
+
+.clear-search-btn.show {
+    display: block;
+}
+
+.search-counter {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #888;
+    text-align: center;
+    display: none;
+}
+
+.search-counter.show {
+    display: block;
+}
+
 /* 分组列表 */
 .groups-list {
     display: flex;
