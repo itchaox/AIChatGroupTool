@@ -1,0 +1,47 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <rect width="48" height="48" rx="8" fill="#1a1a1a"/>
+  <rect x="2" y="2" width="44" height="44" rx="6" fill="#2563eb"/>
+  
+  <!-- 主要AI工具图标组合 -->
+  <g transform="translate(6, 6)">
+    <!-- ChatGPT风格圆形 -->
+    <circle cx="9" cy="9" r="4.5" fill="#10b981" opacity="0.9"/>
+    <circle cx="9" cy="9" r="3" fill="#ffffff" opacity="0.2"/>
+    <path d="M7 9 Q9 7 11 9 Q9 11 7 9" fill="#ffffff" opacity="0.8"/>
+    
+    <!-- Claude风格方形 -->
+    <rect x="21" y="4.5" width="9" height="9" rx="1.5" fill="#f59e0b" opacity="0.9"/>
+    <rect x="23" y="6.5" width="5" height="1.5" fill="#ffffff" opacity="0.8"/>
+    <rect x="23" y="8.5" width="5" height="1.5" fill="#ffffff" opacity="0.8"/>
+    <rect x="23" y="10.5" width="3" height="1.5" fill="#ffffff" opacity="0.8"/>
+    
+    <!-- Gemini风格菱形 -->
+    <path d="M18 21 L22.5 16.5 L27 21 L22.5 25.5 Z" fill="#ef4444" opacity="0.9"/>
+    <path d="M20 21 L22.5 18.5 L25 21 L22.5 23.5 Z" fill="#ffffff" opacity="0.3"/>
+    
+    <!-- Poe风格三角形 -->
+    <path d="M9 21 L13.5 16.5 L18 21 L13.5 25.5 Z" fill="#8b5cf6" opacity="0.9"/>
+    <circle cx="13.5" cy="21" r="2" fill="#ffffff" opacity="0.8"/>
+    
+    <!-- 连接线网络 -->
+    <g stroke="#ffffff" stroke-width="1" opacity="0.4">
+      <path d="M13.5 9 L21 9"/>
+      <path d="M22.5 13.5 L22.5 16.5"/>
+      <path d="M18 21 L13.5 21"/>
+      <path d="M13.5 16.5 L13.5 13.5"/>
+    </g>
+  </g>
+  
+  <!-- 分组管理标识 -->
+  <g transform="translate(36, 36)">
+    <rect width="9" height="9" rx="1.5" fill="#8b5cf6" opacity="0.95"/>
+    <rect x="1.5" y="2" width="6" height="1" fill="#ffffff"/>
+    <rect x="1.5" y="4" width="6" height="1" fill="#ffffff"/>
+    <rect x="1.5" y="6" width="4" height="1" fill="#ffffff"/>
+  </g>
+  
+  <!-- 装饰性光效 -->
+  <circle cx="24" cy="24" r="20" fill="none" stroke="#ffffff" stroke-width="0.5" opacity="0.1"/>
+  <circle cx="24" cy="24" r="16" fill="none" stroke="#ffffff" stroke-width="0.3" opacity="0.15"/>
+</svg>

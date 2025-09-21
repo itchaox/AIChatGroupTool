@@ -1,0 +1,22 @@
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="16" height="16" rx="3" fill="#1a1a1a"/>
+  <rect x="1" y="1" width="14" height="14" rx="2" fill="#2563eb"/>
+  
+  <!-- AI工具图标组合 -->
+  <g transform="translate(2, 2)">
+    <!-- ChatGPT风格圆形 -->
+    <circle cx="3" cy="3" r="1.5" fill="#10b981" opacity="0.8"/>
+    <!-- Claude风格方形 -->
+    <rect x="7" y="1.5" width="3" height="3" rx="0.5" fill="#f59e0b" opacity="0.8"/>
+    <!-- Gemini风格菱形 -->
+    <path d="M6 7 L7.5 5.5 L9 7 L7.5 8.5 Z" fill="#ef4444" opacity="0.8"/>
+    <!-- 连接线 -->
+    <path d="M4.5 3 L7 3 M7.5 4.5 L7.5 5.5" stroke="#ffffff" stroke-width="0.5" opacity="0.6"/>
+  </g>
+  
+  <!-- 分组标识 -->
+  <rect x="12" y="12" width="3" height="3" rx="0.5" fill="#8b5cf6" opacity="0.9"/>
+  <rect x="12.5" y="12.5" width="2" height="0.5" fill="#ffffff"/>
+  <rect x="12.5" y="13.5" width="2" height="0.5" fill="#ffffff"/>
+  <rect x="12.5" y="14.5" width="1" height="0.5" fill="#ffffff"/>
+</svg>

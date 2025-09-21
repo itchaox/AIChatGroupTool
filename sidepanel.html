@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI工具分组管理器</title>
+    <link rel="stylesheet" href="styles/sidepanel.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 头部区域 -->
+        <header class="header">
+            <h1 class="title">AI工具分组管理</h1>
+            <div class="ai-tool-selector">
+                <select id="aiToolSelect" class="ai-tool-select">
+                    <option value="chatgpt">🤖 ChatGPT</option>
+                    <option value="claude">🧠 Claude AI</option>
+                    <option value="gemini">💎 Google Gemini</option>
+                    <option value="poe">🔮 Poe</option>
+                </select>
+            </div>
+        </header>
+
+        <!-- 主内容区域 -->
+        <main class="main-content">
+            <!-- 分组列表 -->
+            <div class="groups-container">
+                <div class="groups-header">
+                    <h2 class="groups-title">分组列表</h2>
+                    <button id="addGroupBtn" class="add-group-btn" title="新建分组">
+                        <span class="icon">+</span>
+                    </button>
+                </div>
+                
+                <div id="groupsList" class="groups-list">
+                    <!-- 分组项将通过JavaScript动态生成 -->
+                    <div class="empty-state" id="emptyState">
+                        <div class="empty-icon">📁</div>
+                        <p class="empty-text">暂无分组</p>
+                        <p class="empty-hint">点击上方 + 按钮创建第一个分组</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 底部操作区域 -->
+        <footer class="footer">
+            <button id="addBookmarkBtn" class="action-btn primary">
+                <span class="icon">⭐</span>
+                <span class="text">添加收藏</span>
+            </button>
+            <button id="settingsBtn" class="action-btn secondary">
+                <span class="icon">⚙️</span>
+                <span class="text">设置</span>
+            </button>
+        </footer>
+    </div>
+
+    <!-- 模态框 -->
+    <!-- 新建分组模态框 -->
+    <div id="createGroupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">新建分组</h3>
+                <button class="modal-close" id="closeCreateGroupModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="groupNameInput" class="input" placeholder="请输入分组名称" maxlength="50">
+            </div>
+            <div class="modal-footer">
+                <button id="cancelCreateGroup" class="btn btn-secondary">取消</button>
+                <button id="confirmCreateGroup" class="btn btn-primary">创建</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑分组模态框 -->
+    <div id="editGroupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">编辑分组</h3>
+                <button class="modal-close" id="closeEditGroupModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="editGroupNameInput" class="input" placeholder="请输入分组名称" maxlength="50">
+            </div>
+            <div class="modal-footer">
+                <button id="cancelEditGroup" class="btn btn-secondary">取消</button>
+                <button id="confirmEditGroup" class="btn btn-primary">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加收藏模态框 -->
+    <div id="addBookmarkModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">添加收藏</h3>
+                <button class="modal-close" id="closeAddBookmarkModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="bookmarkTitle" class="label">标题</label>
+                    <input type="text" id="bookmarkTitle" class="input" placeholder="收藏标题" maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label for="bookmarkUrl" class="label">链接</label>
+                    <input type="url" id="bookmarkUrl" class="input" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label for="bookmarkGroup" class="label">分组</label>
+                    <select id="bookmarkGroup" class="select">
+                        <option value="">请选择分组</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelAddBookmark" class="btn btn-secondary">取消</button>
+                <button id="confirmAddBookmark" class="btn btn-primary">添加</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 确认删除模态框 -->
+    <div id="confirmDeleteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">确认删除</h3>
+                <button class="modal-close" id="closeConfirmDeleteModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteConfirmText" class="confirm-text">确定要删除这个项目吗？此操作无法撤销。</p>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelDelete" class="btn btn-secondary">取消</button>
+                <button id="confirmDelete" class="btn btn-danger">删除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 右键菜单 -->
+    <div id="contextMenu" class="context-menu">
+        <div class="context-menu-item" id="editItem">
+            <span class="icon">✏️</span>
+            <span class="text">编辑</span>
+        </div>
+        <div class="context-menu-item" id="deleteItem">
+            <span class="icon">🗑️</span>
+            <span class="text">删除</span>
+        </div>
+        <div class="context-menu-separator"></div>
+        <div class="context-menu-item" id="openInNewTab">
+            <span class="icon">🔗</span>
+            <span class="text">新标签页打开</span>
+        </div>
+    </div>
+
+    <script src="sidepanel.js"></script>
+</body>
+</html>

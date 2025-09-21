@@ -1,0 +1,37 @@
+<svg width="200" height="50" viewBox="0 0 200 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- ChatGPT图标 -->
+  <g id="chatgpt-icon" transform="translate(0, 0)">
+    <circle cx="25" cy="25" r="20" fill="#10b981" opacity="0.9"/>
+    <circle cx="25" cy="25" r="15" fill="#ffffff" opacity="0.15"/>
+    <path d="M17 25 Q21 17 29 21 Q33 25 29 29 Q25 33 21 29 Q17 25 17 25" fill="#ffffff" opacity="0.8"/>
+    <circle cx="25" cy="25" r="3" fill="#10b981"/>
+  </g>
+  
+  <!-- Claude图标 -->
+  <g id="claude-icon" transform="translate(50, 0)">
+    <rect x="5" y="5" width="40" height="40" rx="6" fill="#f59e0b" opacity="0.9"/>
+    <rect x="10" y="15" width="30" height="3" rx="1.5" fill="#ffffff" opacity="0.9"/>
+    <rect x="10" y="22" width="30" height="3" rx="1.5" fill="#ffffff" opacity="0.9"/>
+    <rect x="10" y="29" width="20" height="3" rx="1.5" fill="#ffffff" opacity="0.9"/>
+    <circle cx="35" cy="30" r="2" fill="#ffffff" opacity="0.7"/>
+  </g>
+  
+  <!-- Gemini图标 -->
+  <g id="gemini-icon" transform="translate(100, 0)">
+    <path d="M25 5 L45 25 L25 45 L5 25 Z" fill="#ef4444" opacity="0.9"/>
+    <path d="M25 13 L37 25 L25 37 L13 25 Z" fill="#ffffff" opacity="0.2"/>
+    <path d="M25 17 L33 25 L25 33 L17 25 Z" fill="#ffffff" opacity="0.3"/>
+    <circle cx="25" cy="25" r="4" fill="#ffffff" opacity="0.8"/>
+    <path d="M25 21 L27 23 L25 25 L23 23 Z" fill="#ef4444"/>
+    <path d="M25 29 L27 27 L25 25 L23 27 Z" fill="#ef4444"/>
+  </g>
+  
+  <!-- Poe图标 -->
+  <g id="poe-icon" transform="translate(150, 0)">
+    <circle cx="25" cy="25" r="20" fill="#8b5cf6" opacity="0.9"/>
+    <circle cx="25" cy="25" r="15" fill="#ffffff" opacity="0.15"/>
+    <path d="M25 9 L33 17 L25 25 L17 17 Z" fill="#ffffff" opacity="0.8"/>
+    <path d="M25 25 L33 33 L25 41 L17 33 Z" fill="#ffffff" opacity="0.6"/>
+    <circle cx="25" cy="25" r="3" fill="#8b5cf6"/>
+  </g>
+</svg>
